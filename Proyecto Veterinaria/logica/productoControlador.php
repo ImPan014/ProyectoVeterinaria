@@ -2,6 +2,7 @@
 
 include 'producto.php';
 
+
 class productoControlador
 {
 
@@ -13,6 +14,7 @@ class productoControlador
         $producto1->id = $_POST['id'];
         $producto1->nombre = $_POST['nombre'];
         $producto1->descripcion = $_POST['descripcion'];
+        $producto1->imageURL = $_POST['imageURL'];
         $producto1->estado = $_POST['estado'];
 
 
@@ -58,6 +60,7 @@ if ($_POST['accion'] == 1) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../diseños/css/bootstrap.min.css">
     <title>Document</title>
 </head>
 
@@ -67,7 +70,7 @@ if ($_POST['accion'] == 1) {
         <div class='row'>
             <div class='col-4'></div>
             <div class='d-grid gap-2 col-4'>
-                <a href='../producto/ABCproductsSC.php' class='btn btn-success mb-3 mt-3'>Regresar</a>
+                <a href='../admin/ABCproductsSC.php' class='btn btn-success mb-3 mt-3'>Regresar</a>
             </div>
             <div class='col-4'></div>
         </div>

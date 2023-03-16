@@ -1,161 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <title>Alta</title>
-</head>
+include 'conexion.php';
+class app
+{
 
-<body>
-    <div class="container">
-        <?php
+    public function insert()
+    {
 
-        include 'conexion.php';
-        class app
-        {
+        $nombreTabla = get_class($this);
 
-            public function insert()
-            {
+        $atributos = array();
 
-                $nombreTabla = get_class($this);
+        foreach ($this as $indice => $valor) {
+            $atributos[$indice] = $valor;
+        }
 
-                $atributos = array();
+        $query = "INSERT INTO " . $nombreTabla . " (";
 
-                foreach ($this as $indice => $valor) {
-                    $atributos[$indice] = $valor;
-                }
+        foreach ($atributos as $indice => $valor) {
+            $query = $query . " " . $indice . ",";
+        }
+        $query = substr($query, 0, -1) . ") VALUES (";
 
-                $query = "INSERT INTO " . $nombreTabla . " (";
+        foreach ($atributos as $indice => $value) {
+            $query = $query . " '" . $value . "',";
+        }
 
-                foreach ($atributos as $indice => $valor) {
-                    $query = $query . " " . $indice . ",";
-                }
-                $query = substr($query, 0, -1) . ") VALUES (";
+        $query = substr($query, 0, -1) . " );";
 
-                foreach ($atributos as $indice => $value) {
-                    $query = $query . " '" . $value . "',";
-                }
+        $conexion = new conexion();
 
-                $query = substr($query, 0, -1) . " )";
+        $conn = $conexion->conectar();
 
-                $conexion = new conexion();
-
-                $conn = $conexion->conectar();
-
-                $rs = $conn->prepare($query);
-                try {
-                    $rs->execute();
-                    echo '<div class="alert alert-success" role="alert" id="alert">
+        $rs = $conn->prepare($query);
+        var_dump($query);
+        try {
+            $rs->execute();
+            echo '<div class="alert alert-success" role="alert" id="alert">
                         ¡Guardado Correctamente!
                         </div>';
-                    echo '<h1 style="text-align: center;" id="commit">¡Hecho!</h1>';
-                } catch (\Throwable $th) {
-                    echo '<div class="alert alert-danger" role="alert" id="alert">
+            echo '<h1 style="text-align: center;" id="commit">¡Hecho!</h1>';
+        } catch (\Throwable $th) {
+            echo '<div class="alert alert-danger" role="alert" id="alert">
                     ¡Error al guardar!
                     </div>';
-                    echo '<h1 style="text-align: center;" id="error">¡Ups!, algo salio mal</h1>';
-                }
-            }
-            public function update()
-            {
-                $nombreTabla = get_class($this);
-
-                $atributos = array();
-
-                foreach ($this as $indice => $valor) {
-                    $atributos[$indice] = $valor;
-                }
-
-                $query = "UPDATE " . $nombreTabla . " SET ";
-
-                foreach ($atributos as $indice => $valor) {
-                    $query = $query . " " . $indice . " = '" . $valor . "', ";
-                }
-
-                function endKey($array)
-                {
-
-                    end($array);
-
-                    return key($array);
-                }
-
-                $query = substr($query, 0, -13) . " WHERE " . endKey($atributos) . " = " . end($atributos) . ";";
-
-
-                $conexion = new conexion();
-
-                $conn = $conexion->conectar();
-
-                $rs = $conn->prepare($query);
-                try {
-                    $rs->execute();
-                    echo '<div class="alert alert-success" role="alert" id="alert">
-                        ¡Actualizar Correctamente!
-                        </div>';
-                    echo '<h1 style="text-align: center;" id="commit">¡Hecho!</h1>';
-                } catch (\Throwable $th) {
-                    echo '<div class="alert alert-danger" role="alert" id="alert">
-                    ¡Error al Actualizar!
-                    </div>';
-                    echo '<h1 style="text-align: center;" id="error">¡Ups!, algo salio mal</h1>';
-                    echo $th;
-                }
-            }
-            public function delete()
-            {
-                $nombreTabla = get_class($this);
-
-                $atributos = array();
-
-                foreach ($this as $indice => $valor) {
-                    $atributos[$indice] = $valor;
-                }
-
-                $query = "UPDATE " . $nombreTabla . " SET ";
-
-                $id = $atributos['id'];
-
-                unset($atributos['id']);
-
-                foreach ($atributos as $indice => $valor) {
-                    $query = $query . " " . $indice . " = '" . $valor . "', ";
-                }
-
-                $query = substr($query, 0, -2) ." WHERE id = " . $id. ";";
-
-                $conexion = new conexion();
-
-                $conn = $conexion->conectar();
-
-                $rs = $conn->prepare($query);
-                try {
-                    $rs->execute();
-                    echo '<div class="alert alert-success" role="alert" id="alert">
-                        ¡Actualizar Correctamente!
-                        </div>';
-                    echo '<h1 style="text-align: center;" id="commit">¡Hecho!</h1>';
-                } catch (\Throwable $th) {
-                    echo '<div class="alert alert-danger" role="alert" id="alert">
-                    ¡Error al Actualizar!
-                    </div>';
-                    echo '<h1 style="text-align: center;" id="error">¡Ups!, algo salio mal</h1>';
-                    echo $th;
-                }
-            }
+            echo '<h1 style="text-align: center;" id="error">¡Ups!, algo salio mal</h1>';
         }
-        ?>
+    }
+    public function update()
+    {
+        $nombreTabla = get_class($this);
 
+        $atributos = array();
 
-    </div>
-    <script>
-        setTimeout(() => {
-            document.getElementById("alert").remove();
-        }, 0);
-    </script>
-</body>
+        foreach ($this as $indice => $valor) {
+            $atributos[$indice] = $valor;
+        }
 
-</html>
+        $query = "UPDATE " . $nombreTabla . " SET ";
+
+        $id = $atributos['id'];
+
+        unset($atributos['id']);
+
+        foreach ($atributos as $indice => $valor) {
+            $query = $query . " " . $indice . " = '" . $valor . "', ";
+        }
+
+        $query = substr($query, 0, -2) . " WHERE id = " . $id . ";";
+
+        $conexion = new conexion();
+
+        $conn = $conexion->conectar();
+
+        $rs = $conn->prepare($query);
+        try {
+            $rs->execute();
+            echo '<div class="alert alert-success" role="alert" id="alert">
+                        ¡Actualizar Correctamente!
+                        </div>';
+            echo '<h1 style="text-align: center;" id="commit">¡Hecho!</h1>';
+        } catch (\Throwable $th) {
+            echo '<div class="alert alert-danger" role="alert" id="alert">
+                    ¡Error al Actualizar!
+                    </div>';
+            echo '<h1 style="text-align: center;" id="error">¡Ups!, algo salio mal</h1>';
+            echo $th;
+        }
+    }
+    public function delete()
+    {
+        $nombreTabla = get_class($this);
+
+        $atributos = array();
+
+        foreach ($this as $indice => $valor) {
+            $atributos[$indice] = $valor;
+        }
+
+        $query = "UPDATE " . $nombreTabla . " SET ";
+
+        $id = $atributos['id'];
+
+        unset($atributos['id']);
+
+        foreach ($atributos as $indice => $valor) {
+            $query = $query . " " . $indice . " = '" . $valor . "', ";
+        }
+
+        $query = substr($query, 0, -2) . " WHERE id = " . $id . ";";
+
+        $conexion = new conexion();
+
+        $conn = $conexion->conectar();
+
+        $rs = $conn->prepare($query);
+        try {
+            $rs->execute();
+            echo '<div class="alert alert-success" role="alert" id="alert">
+                        ¡Dado de baja Correctamente!
+                        </div>';
+            echo '<h1 style="text-align: center;" id="commit">¡Hecho!</h1>';
+        } catch (\Throwable $th) {
+            echo '<div class="alert alert-danger" role="alert" id="alert">
+                    ¡Error al dar de baja!
+                    </div>';
+            echo '<h1 style="text-align: center;" id="error">¡Ups!, algo salio mal</h1>';
+            echo $th;
+        }
+    }
+}
